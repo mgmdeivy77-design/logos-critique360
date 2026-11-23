@@ -146,9 +146,21 @@
       overflow-wrap: break-word;
     }
 
+    .focus-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--surface-alt);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
     label.section-label {
       display: block;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
       color: var(--text-muted);
       margin-bottom: 6px;
@@ -364,27 +376,34 @@
     }
 
     .rich-text {
-      font-size: 0.88rem;
+      font-size: 0.89rem;
       color: var(--text);
       overflow-wrap: break-word;
       word-break: break-word;
     }
 
     .rich-text p {
-      margin: 0 0 8px;
+      margin: 0 0 9px;
     }
 
     .rich-text p:last-child {
       margin-bottom: 0;
     }
 
+    .rich-text h3 {
+      margin: 10px 0 5px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
     .rich-text ul, .rich-text ol {
       margin: 6px 0 10px;
-      padding-left: 18px;
+      padding-left: 19px;
     }
 
     .rich-text li {
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
 
     .pill-list {
@@ -407,13 +426,18 @@
 
     .conclusion-box {
       border-left: 4px solid var(--primary);
-      padding-left: 10px;
+      padding-left: 11px;
+      background: var(--surface-alt);
+      border-radius: 0 10px 10px 0;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      padding-right: 10px;
     }
 
     .export-row {
       display: flex;
       gap: 8px;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .modal-backdrop {
@@ -647,22 +671,23 @@
               </svg>
               <span>Radiografía Analítica</span>
             </span>
+            <span class="focus-badge" id="out-focus-badge">Universal</span>
           </h2>
           <div class="metrics-grid">
             <div class="metric-box">
               <svg width="68" height="68" viewBox="0 0 72 72" aria-hidden="true">
-                <circle cx="36" cy="36" r="28" fill="none" stroke="currentColor" stroke-opacity="0.16" stroke-width="7"></circle>
-                <circle id="ring-logic" cx="36" cy="36" r="28" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-dasharray="175.93" stroke-dashoffset="175.93" transform="rotate(-90 36 36)"></circle>
+                <circle cx="36" cy="36" r="28" fill="none" stroke="var(--border)" stroke-width="7"></circle>
+                <circle id="ring-logic" cx="36" cy="36" r="28" fill="none" stroke="var(--primary)" stroke-width="7" stroke-linecap="round" stroke-dasharray="175.93" stroke-dashoffset="175.93" transform="rotate(-90 36 36)"></circle>
               </svg>
               <div class="metric-val" id="val-logic">0%</div>
               <div class="metric-label">Solidez Inferencial</div>
             </div>
             <div class="metric-box">
               <svg width="68" height="68" viewBox="0 0 72 72" aria-hidden="true">
-                <circle cx="36" cy="36" r="28" fill="none" stroke="currentColor" stroke-opacity="0.16" stroke-width="7"></circle>
-                <circle id="ring-bias" cx="36" cy="36" r="28" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-dasharray="175.93" stroke-dashoffset="175.93" transform="rotate(-90 36 36)"></circle>
+                <circle cx="36" cy="36" r="28" fill="none" stroke="var(--border)" stroke-width="7"></circle>
+                <circle id="ring-bias" cx="36" cy="36" r="28" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="175.93" stroke-dashoffset="175.93" transform="rotate(-90 36 36)"></circle>
               </svg>
-              <div class="metric-val" id="val-bias">0%</div>
+              <div class="metric-val" id="val-bias" style="color: var(--accent);">0%</div>
               <div class="metric-label">Riesgo de Falacia/Sesgo</div>
             </div>
           </div>
@@ -712,7 +737,7 @@
               <span>2. Auditoría Lógica y Refutación</span>
             </span>
           </h2>
-          <div id="out-fallacies" class="pill-list" style="margin-bottom: 8px;"></div>
+          <div id="out-fallacies" class="pill-list" style="margin-bottom: 10px;"></div>
           <div id="out-refutation" class="rich-text"></div>
         </article>
 
@@ -768,7 +793,10 @@
     <div class="modal-panel">
       <div class="modal-header">
         <h2 class="modal-title" id="history-modal-title">Análisis Guardados</h2>
-        <button type="button" class="close-btn" id="close-history-modal">Cerrar</button>
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="close-btn" id="clear-all-history">Borrar todo</button>
+          <button type="button" class="close-btn" id="close-history-modal">Cerrar</button>
+        </div>
       </div>
       <div id="history-list"></div>
     </div>
@@ -870,6 +898,12 @@
       }
     ];
 
+    const FOCUS_LABELS = {
+      universal: "Universal y Equilibrado",
+      logic: "Lógica y Sesgos",
+      "science-theology": "Ciencia y Teología"
+    };
+
     const STORAGE_KEYS = {
       theme: "logoscritique_theme_v1",
       history: "logoscritique_history_v1"
@@ -949,31 +983,49 @@
 
     function formatRichText(raw) {
       if (!raw) return "<p>No disponible.</p>";
-      const lines = String(raw).split(/?
+      const lines = String(raw).split(/
+?
 /).map((l) => l.trim()).filter(Boolean);
       let html = "";
-      let inList = false;
+      let listType = null;
 
       const inlineBold = (txt) =>
         escapeHtml(txt).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 
+      const closeListIfOpen = () => {
+        if (listType === "ul") html += "</ul>";
+        if (listType === "ol") html += "</ol>";
+        listType = null;
+      };
+
       for (const line of lines) {
+        const headingMatch = line.match(/^#{2,4}\s+(.*)$/);
         const bulletMatch = line.match(/^[-*•]\s+(.*)$/);
-        if (bulletMatch) {
-          if (!inList) {
+        const orderedMatch = line.match(/^\d+[.)]\s+(.*)$/);
+
+        if (headingMatch) {
+          closeListIfOpen();
+          html += `<h3>${inlineBold(headingMatch[1])}</h3>`;
+        } else if (bulletMatch) {
+          if (listType !== "ul") {
+            closeListIfOpen();
             html += "<ul>";
-            inList = true;
+            listType = "ul";
           }
           html += `<li>${inlineBold(bulletMatch[1])}</li>`;
-        } else {
-          if (inList) {
-            html += "</ul>";
-            inList = false;
+        } else if (orderedMatch) {
+          if (listType !== "ol") {
+            closeListIfOpen();
+            html += "<ol>";
+            listType = "ol";
           }
+          html += `<li>${inlineBold(orderedMatch[1])}</li>`;
+        } else {
+          closeListIfOpen();
           html += `<p>${inlineBold(line)}</p>`;
         }
       }
-      if (inList) html += "</ul>";
+      closeListIfOpen();
       return html || `<p>${inlineBold(raw)}</p>`;
     }
 
@@ -983,9 +1035,16 @@
       return Math.max(0, Math.min(100, Math.round(num)));
     }
 
-    function renderReport(report, argText) {
-      currentReport = { argument: argText, focus: currentFocus, data: report, date: new Date().toISOString() };
+    function renderReport(report, argText, focusKey) {
+      const activeFocus = focusKey || currentFocus;
+      currentReport = {
+        argument: argText,
+        focus: activeFocus,
+        data: report,
+        date: new Date().toISOString()
+      };
       document.getElementById("results-container").style.display = "flex";
+      document.getElementById("out-focus-badge").textContent = FOCUS_LABELS[activeFocus] || "Universal";
 
       const logic = clampScore(report.logicScore);
       const bias = clampScore(report.biasRiskScore);
@@ -1068,7 +1127,7 @@
         `;
         div.querySelector("[data-load]").addEventListener("click", () => {
           document.getElementById("argument-input").value = item.argument;
-          renderReport(item.data, item.argument);
+          renderReport(item.data, item.argument, item.focus || "universal");
           closeModal("history-modal");
           showToast("Análisis cargado");
         });
@@ -1110,22 +1169,25 @@
       if (!currentReport) return "";
       const d = currentReport.data;
       return [
+        "LOGOSCRITIQUE — INFORME DE ANÁLISIS",
+        "Enfoque: " + (FOCUS_LABELS[currentReport.focus] || "Universal"),
+        "",
         "ARGUMENTO:",
         currentReport.argument,
         "",
-        "ANATOMÍA Y SUPUESTOS:",
+        "1. ANATOMÍA Y SUPUESTOS:",
         d.anatomy || "",
         "",
-        "FALACIAS / SESGOS:",
+        "2. FALACIAS / SESGOS:",
         (d.fallacies || []).join(", "),
         "",
         "REFUTACIÓN OBJETIVA:",
         d.refutation || "",
         "",
-        "CIENCIA Y TEOLOGÍA:",
+        "3. CIENCIA Y TEOLOGÍA:",
         d.scienceAndTheology || "",
         "",
-        "CONCLUSIÓN UNIVERSAL:",
+        "4. CONCLUSIÓN UNIVERSAL:",
         d.universalConclusion || ""
       ].join("
 ");
@@ -1158,6 +1220,11 @@
         openModal("history-modal");
       });
       document.getElementById("close-history-modal").addEventListener("click", () => closeModal("history-modal"));
+      document.getElementById("clear-all-history").addEventListener("click", () => {
+        try { localStorage.removeItem(STORAGE_KEYS.history); } catch (_) {}
+        renderHistory();
+        showToast("Historial borrado");
+      });
 
       // Botón Instalar App
       document.getElementById("btn-install").addEventListener("click", () => {
@@ -1234,7 +1301,7 @@
           const report = await callGeminiAnalysis(argText, currentFocus);
           banner.className = "status-banner";
           banner.textContent = "";
-          renderReport(report, argText);
+          renderReport(report, argText, currentFocus);
           saveHistoryEntry(currentReport);
           showToast("Análisis completado");
         } catch (err) {

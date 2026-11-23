@@ -10,18 +10,37 @@ export default async function handler(req, res) {
     });
   }
 
-  const { argument, focus } = req.body || {};
+  let bodyData = req.body;
+  if (typeof bodyData === "string") {
+    try {
+      bodyData = JSON.parse(bodyData);
+    } catch (_) {
+      bodyData = {};
+    }
+  }
+
+  const { argument, focus } = bodyData || {};
   if (!argument || typeof argument !== "string" || !argument.trim()) {
     return res.status(400).json({ error: "El campo 'argument' es obligatorio." });
   }
 
-  const systemInstruction = `Eres un analista lógico, epistemológico y crítico de alto rigor.
-Tu tarea es analizar, deconstruir y refutar de manera objetiva, respetuosa y fundamentada el planteamiento del usuario.
-Reglas estrictas:
-1. Nunca inventes hechos, datos estadísticos, citas textuales, estudios científicos ni versículos bíblicos. Si algo no es verificable o es incierto, indícalo explícitamente.
-2. Separa claramente los niveles de análisis: lógica formal e informal, evidencia científica empírica y reflexión teológica/filosófica rigurosa (respetando los ámbitos metodológicos de cada disciplina sin caer en simplismos).
-3. Redacta en español claro, bien estructurado y profesional, usando **negritas** para ideas clave y viñetas (- ) cuando sea útil.
-4. Entrega una conclusión equilibrada y universalmente defensible desde la razón crítica.`;
+  const focusGuidance = {
+    universal: "Mantén un equilibrio riguroso entre análisis lógico, supuestos implícitos, evidencia científica, reflexión teológica/filosófica y conclusión universal.",
+    logic: "Profundiza especialmente en la validez formal e informal, estructura de premisas, falacias y sesgos cognitivos, sin descuidar el contraste empírico y teológico.",
+    "science-theology": "Profundiza especialmente en la distinción metodológica entre ciencia empírica y teología/filosofía, evitando reduccionismos o falsos conflictos, con rigor lógico."
+  };
+
+  const selectedGuidance = focusGuidance[focus] || focusGuidance.universal;
+
+  const systemInstruction = `Eres un analista lógico, epistemológico y crítico de alto rigor, objetivo y respetuoso.
+Tu tarea es analizar, deconstruir y refutar de manera objetiva y fundamentada el planteamiento del usuario.
+
+Reglas obligatorias de veracidad y rigor:
+1. PROHIBIDO INVENTAR: Nunca inventes estudios científicos, porcentajes, citas textuales, autores, fechas, hechos históricos ni pasajes bíblicos. Si un dato o referencia no es seguro o no aplica, no lo fabriques; señala explícitamente qué es verificable, qué es debatible y qué es incierto.
+2. OBJETIVIDAD Y RESPETO: Evalúa el argumento por su estructura y evidencia, nunca con ataques personales ni burlas. Trata tanto la ciencia empírica como la teología académica con seriedad y precisión conceptual, respetando los límites de cada disciplina.
+3. FORMATO LEGIBLE EN ESPAÑOL: Usa **negritas** para conceptos clave, viñetas (- ) o listas numeradas (1. ) para enumeraciones, y párrafos claros y breves.
+4. ÉNFASIS DEL ENFOQUE: ${selectedGuidance}
+5. PUNTUACIONES (0-100): Calibra logicScore, biasRiskScore, scienceSupportScore y theologyCoherenceScore de forma realista y coherente con el texto analizado.`;
 
   const responseSchema = {
     type: "OBJECT",
@@ -63,7 +82,7 @@ Reglas estrictas:
         role: "user",
         parts: [
           {
-            text: `Enfoque solicitado: ${focus || "universal"}\nPlanteamiento a analizar:\n${argument.trim()}`
+            text: `Enfoque: ${focus || "universal"}\nPlanteamiento a analizar:\n${argument.trim()}`
           }
         ]
       }
