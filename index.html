@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f3a52" id="meta-theme-color" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LogosCritique" />
+  <title>LogosCritique — Deconstrucción Objetiva de Argumentos</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <style>
+    :root {
+      --bg: #f6f4ef;
+      --surface: #ffffff;
+      --surface-alt: #efece4;
+      --text: #182026;
+      --text-muted: #52606d;
+      --primary: #1f3a52;
+      --primary-contrast: #ffffff;
+      --accent: #8c5a2b;
+      --border: #d9d3c7;
+      --danger: #9e2a2b;
+      --success: #2b6e4e;
+      --shadow: 0 8px 24px rgba(24, 32, 38, 0.08);
+      --radius: 14px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      padding-bottom: calc(28px + env(safe-area-inset-bottom));
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--primary);
+      color: var(--primary-contrast);
+      padding: calc(12px + env(safe-area-inset-top)) 14px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.14);
+      color: var(--primary-contrast);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 10px;
+      height: 36px;
+      padding: 0 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.97);
+    }
+
+    .main-content {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .card-title-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      overflow-wrap: break-word;
+    }
+
+    label.section-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    textarea#argument-input {
+      width: 100%;
+      min-height: 124px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+      line-height: 1.45;
+      resize: vertical;
+      outline: none;
+    }
+
+    textarea#argument-input:focus {
+      border-color: var(--primary);
+      background: var(--surface);
+    }
+
+    .focus-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .focus-btn {
+      padding: 8px 6px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      font-size: 0.76rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      overflow-wrap: break-word;
+      line-height: 1.25;
+    }
+
+    .focus-btn.active {
+      background: var(--primary);
+      color: var(--primary-contrast);
+      border-color: var(--primary);
+    }
+
+    .samples-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .sample-chip {
+      background: var(--surface-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.74rem;
+      cursor: pointer;
+      text-align: left;
+      max-width: 100%;
+      overflow-wrap: break-word;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      background: var(--primary);
+      color: var(--primary-contrast);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background: var(--surface-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .status-banner {
+      display: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      overflow-wrap: break-word;
+    }
+
+    .status-banner.error {
+      display: block;
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .status-banner.info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--primary);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #results-container {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .metric-box {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .metric-label {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 4px;
+      overflow-wrap: break-word;
+    }
+
+    .metric-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .bar-item {
+      margin-top: 10px;
+    }
+
+    .bar-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 8px;
+      background: var(--surface-alt);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+
+    .rich-text {
+      font-size: 0.88rem;
+      color: var(--text);
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .rich-text p {
+      margin: 0 0 8px;
+    }
+
+    .rich-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .rich-text ul, .rich-text ol {
+      margin: 6px 0 10px;
+      padding-left: 18px;
+    }
+
+    .rich-text li {
+      margin-bottom: 5px;
+    }
+
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .pill {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 999px;
+      overflow-wrap: break-word;
+    }
+
+    .conclusion-box {
+      border-left: 4px solid var(--primary);
+      padding-left: 10px;
+    }
+
+    .export-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 15, 20, 0.58);
+      z-index: 50;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: 100%;
+      max-width: 456px;
+      max-height: 82dvh;
+      overflow-y: auto;
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 18px 18px 14px 14px;
+      border: 1px solid var(--border);
+      padding: 16px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .close-btn {
+      background: var(--surface-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .theme-option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 12px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .theme-option.selected {
+      border-color: var(--primary);
+      outline: 2px solid var(--primary);
+    }
+
+    .swatches {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .history-item {
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+
+    .history-preview {
+      font-size: 0.84rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      overflow-wrap: break-word;
+    }
+
+    .history-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mini-btn {
+      padding: 4px 8px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: var(--primary-contrast);
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 80;
+      display: none;
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+          <path d="M12 3v18"></path>
+          <path d="M5 7h14"></path>
+          <path d="m5 7-2 6h4l-2-6Z"></path>
+          <path d="m19 7-2 6h4l-2-6Z"></path>
+        </svg>
+        <span>LogosCritique</span>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="icon-btn" id="btn-theme-palette" aria-label="Cambiar paleta de colores">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <circle cx="13.5" cy="6.5" r="1.5"></circle>
+            <circle cx="17.5" cy="10.5" r="1.5"></circle>
+            <circle cx="8.5" cy="7.5" r="1.5"></circle>
+            <circle cx="6.5" cy="12.5" r="1.5"></circle>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2Z"></path>
+          </svg>
+          <span>Paleta</span>
+        </button>
+        <button type="button" class="icon-btn" id="btn-history" aria-label="Abrir historial">
+          <span>Historial</span>
+        </button>
+        <button type="button" class="icon-btn" id="btn-install" aria-label="Instalar aplicación">
+          <span>App</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="card" aria-labelledby="input-heading">
+        <h1 class="card-title" id="input-heading">
+          <span class="card-title-left">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"></path>
+            </svg>
+            <span>Argumento o Planteamiento</span>
+          </span>
+        </h1>
+
+        <label class="section-label" for="argument-input">Escribe o pega el planteamiento</label>
+        <textarea id="argument-input" placeholder="Ejemplo: Si la ciencia explica los mecanismos físicos del universo, entonces la teología carece de sentido o de fundamento racional..."></textarea>
+
+        <label class="section-label" style="margin-top: 10px;">Enfoque de análisis</label>
+        <div class="focus-grid" role="group" aria-label="Enfoque de análisis">
+          <button type="button" class="focus-btn active" data-focus="universal">Universal y Equilibrado</button>
+          <button type="button" class="focus-btn" data-focus="logic">Lógica y Sesgos</button>
+          <button type="button" class="focus-btn" data-focus="science-theology">Ciencia y Teología</button>
+        </div>
+
+        <div class="samples-row" aria-label="Ejemplos rápidos">
+          <button type="button" class="sample-chip" data-sample="Todo lo que existe tiene una causa; por tanto, el universo completo debe tener una causa física dentro del propio universo.">Ejemplo 1: Causalidad</button>
+          <button type="button" class="sample-chip" data-sample="La moralidad es únicamente una construcción cultural, así que ningún acto es objetivamente bueno o malo.">Ejemplo 2: Moral</button>
+          <button type="button" class="sample-chip" data-sample="Una creencia religiosa no es demostrable en un laboratorio, por lo tanto es irracional sostenerla.">Ejemplo 3: Ciencia vs. Fe</button>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn-primary" id="btn-analyze">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+            <span>Analizar y Deconstruir</span>
+          </button>
+          <button type="button" class="btn-secondary" id="btn-clear">Limpiar</button>
+        </div>
+      </section>
+
+      <div id="status-banner" class="status-banner" role="status" aria-live="polite"></div>
+
+      <section id="results-container" aria-label="Resultados del análisis">
+        <article class="card">
+          <h2 class="card-title">
+            <span class="card-title-left">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M3 3v18h18"></path>
+                <path d="m19 9-5 5-4-4-3 3"></path>
+              </svg>
+              <span>Radiografía Analítica</span>
+            </span>
+          </h2>
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <svg width="68" height="68" viewBox="0 0 72 72" aria-hidden="true">
+                <circle cx="36" cy="36" r="28" fill="none" stroke="currentColor" stroke-opacity="0.16" stroke-width="7"></circle>
+                <circle id="ring-logic" cx="36" cy="36" r="28" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-dasharray="175.93" stroke-dashoffset="175.93" transform="rotate(-90 36 36)"></circle>
+              </svg>
+              <div class="metric-val" id="val-logic">0%</div>
+              <div class="metric-label">Solidez Inferencial</div>
+            </div>
+            <div class="metric-box">
+              <svg width="68" height="68" viewBox="0 0 72 72" aria-hidden="true">
+                <circle cx="36" cy="36" r="28" fill="none" stroke="currentColor" stroke-opacity="0.16" stroke-width="7"></circle>
+                <circle id="ring-bias" cx="36" cy="36" r="28" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-dasharray="175.93" stroke-dashoffset="175.93" transform="rotate(-90 36 36)"></circle>
+              </svg>
+              <div class="metric-val" id="val-bias">0%</div>
+              <div class="metric-label">Riesgo de Falacia/Sesgo</div>
+            </div>
+          </div>
+
+          <div class="bar-item">
+            <div class="bar-head">
+              <span>Respaldo Empírico / Científico</span>
+              <span id="val-science">0%</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="bar-science" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="bar-item">
+            <div class="bar-head">
+              <span>Coherencia Filosófico-Teológica</span>
+              <span id="val-theology">0%</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" id="bar-theology" style="width: 0%;"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">
+            <span class="card-title-left">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+              </svg>
+              <span>1. Anatomía y Supuestos</span>
+            </span>
+          </h2>
+          <div id="out-anatomy" class="rich-text"></div>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">
+            <span class="card-title-left">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path>
+              </svg>
+              <span>2. Auditoría Lógica y Refutación</span>
+            </span>
+          </h2>
+          <div id="out-fallacies" class="pill-list" style="margin-bottom: 8px;"></div>
+          <div id="out-refutation" class="rich-text"></div>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">
+            <span class="card-title-left">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <path d="M2 12h20"></path>
+                <path d="m15 5 7 7-7 7"></path>
+                <path d="m9 19-7-7 7-7"></path>
+              </svg>
+              <span>3. Ciencia y Teología</span>
+            </span>
+          </h2>
+          <div id="out-science-theology" class="rich-text"></div>
+        </article>
+
+        <article class="card">
+          <h2 class="card-title">
+            <span class="card-title-left">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+              <span>4. Conclusión Universal</span>
+            </span>
+          </h2>
+          <div class="conclusion-box">
+            <div id="out-conclusion" class="rich-text"></div>
+          </div>
+          <div class="export-row">
+            <button type="button" class="btn-secondary" style="flex: 1;" id="btn-copy">Copiar Informe</button>
+            <button type="button" class="btn-secondary" style="flex: 1;" id="btn-share">Compartir</button>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal de Paleta de Colores -->
+  <div class="modal-backdrop" id="theme-modal" role="dialog" aria-modal="true" aria-labelledby="theme-modal-title">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 class="modal-title" id="theme-modal-title">Paleta de Colores</h2>
+        <button type="button" class="close-btn" id="close-theme-modal">Cerrar</button>
+      </div>
+      <div id="theme-options-list"></div>
+    </div>
+  </div>
+
+  <!-- Modal de Historial -->
+  <div class="modal-backdrop" id="history-modal" role="dialog" aria-modal="true" aria-labelledby="history-modal-title">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 class="modal-title" id="history-modal-title">Análisis Guardados</h2>
+        <button type="button" class="close-btn" id="close-history-modal">Cerrar</button>
+      </div>
+      <div id="history-list"></div>
+    </div>
+  </div>
+
+  <!-- Modal de Instalación PWA -->
+  <div class="modal-backdrop" id="install-modal" role="dialog" aria-modal="true" aria-labelledby="install-modal-title">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2 class="modal-title" id="install-modal-title">Instalar en tu Celular</h2>
+        <button type="button" class="close-btn" id="close-install-modal">Cerrar</button>
+      </div>
+      <div class="rich-text">
+        <p><strong>Android (Chrome):</strong> Toca el menú de tres puntos arriba a la derecha y selecciona <strong>Instalar aplicación</strong> o <strong>Agregar a la pantalla principal</strong>.</p>
+        <p><strong>iPhone / iPad (Safari):</strong> Toca el botón <strong>Compartir</strong> y elige <strong>Agregar a inicio</strong>.</p>
+      </div>
+      <button type="button" class="btn-primary" id="btn-native-install" style="margin-top: 10px; display: none;">Instalar Ahora</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const THEMES = [
+      {
+        id: "editorial",
+        name: "Clásico Editorial",
+        vars: {
+          "--bg": "#f6f4ef",
+          "--surface": "#ffffff",
+          "--surface-alt": "#efece4",
+          "--text": "#182026",
+          "--text-muted": "#52606d",
+          "--primary": "#1f3a52",
+          "--primary-contrast": "#ffffff",
+          "--accent": "#8c5a2b",
+          "--border": "#d9d3c7"
+        }
+      },
+      {
+        id: "oled",
+        name: "Nocturno OLED",
+        vars: {
+          "--bg": "#0b0e12",
+          "--surface": "#141920",
+          "--surface-alt": "#1d242e",
+          "--text": "#eef2f6",
+          "--text-muted": "#9aa6b2",
+          "--primary": "#3b6e9c",
+          "--primary-contrast": "#ffffff",
+          "--accent": "#c88a4b",
+          "--border": "#2a3441"
+        }
+      },
+      {
+        id: "oxford",
+        name: "Académico Oxford",
+        vars: {
+          "--bg": "#f2f4f8",
+          "--surface": "#ffffff",
+          "--surface-alt": "#e6ebf2",
+          "--text": "#141c2b",
+          "--text-muted": "#4b586e",
+          "--primary": "#16294a",
+          "--primary-contrast": "#ffffff",
+          "--accent": "#2d6a7e",
+          "--border": "#cbd4e2"
+        }
+      },
+      {
+        id: "sage",
+        name: "Salvia y Tierra",
+        vars: {
+          "--bg": "#f3f5f1",
+          "--surface": "#ffffff",
+          "--surface-alt": "#e7ece3",
+          "--text": "#1b241d",
+          "--text-muted": "#516154",
+          "--primary": "#2f5241",
+          "--primary-contrast": "#ffffff",
+          "--accent": "#945d36",
+          "--border": "#ced8c9"
+        }
+      },
+      {
+        id: "cyan",
+        name: "Cian Científico",
+        vars: {
+          "--bg": "#eff6f8",
+          "--surface": "#ffffff",
+          "--surface-alt": "#e1eff3",
+          "--text": "#10232a",
+          "--text-muted": "#46636e",
+          "--primary": "#0f4c5c",
+          "--primary-contrast": "#ffffff",
+          "--accent": "#b05a2a",
+          "--border": "#c2dae1"
+        }
+      }
+    ];
+
+    const STORAGE_KEYS = {
+      theme: "logoscritique_theme_v1",
+      history: "logoscritique_history_v1"
+    };
+
+    let currentFocus = "universal";
+    let currentReport = null;
+    let deferredInstallPrompt = null;
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "block";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        toast.style.display = "none";
+      }, 2400);
+    }
+
+    function applyTheme(themeId) {
+      const theme = THEMES.find((t) => t.id === themeId) || THEMES[0];
+      Object.entries(theme.vars).forEach(([k, v]) => {
+        document.documentElement.style.setProperty(k, v);
+        document.body.style.setProperty(k, v);
+      });
+      const metaTheme = document.getElementById("meta-theme-color");
+      if (metaTheme) {
+        metaTheme.setAttribute("content", theme.vars["--primary"]);
+      }
+      try {
+        localStorage.setItem(STORAGE_KEYS.theme, theme.id);
+      } catch (_) {}
+      renderThemeOptions(theme.id);
+    }
+
+    function renderThemeOptions(activeId) {
+      const container = document.getElementById("theme-options-list");
+      container.innerHTML = "";
+      THEMES.forEach((theme) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "theme-option" + (theme.id === activeId ? " selected" : "");
+        btn.innerHTML = `
+          <span><strong>${escapeHtml(theme.name)}</strong></span>
+          <span class="swatches" aria-hidden="true">
+            <span class="swatch" style="background:${theme.vars["--primary"]}"></span>
+            <span class="swatch" style="background:${theme.vars["--accent"]}"></span>
+            <span class="swatch" style="background:${theme.vars["--bg"]}"></span>
+          </span>
+        `;
+        btn.addEventListener("click", () => {
+          applyTheme(theme.id);
+          closeModal("theme-modal");
+          showToast("Tema: " + theme.name);
+        });
+        container.appendChild(btn);
+      });
+    }
+
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("open");
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("open");
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatRichText(raw) {
+      if (!raw) return "<p>No disponible.</p>";
+      const lines = String(raw).split(/?
+/).map((l) => l.trim()).filter(Boolean);
+      let html = "";
+      let inList = false;
+
+      const inlineBold = (txt) =>
+        escapeHtml(txt).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+      for (const line of lines) {
+        const bulletMatch = line.match(/^[-*•]\s+(.*)$/);
+        if (bulletMatch) {
+          if (!inList) {
+            html += "<ul>";
+            inList = true;
+          }
+          html += `<li>${inlineBold(bulletMatch[1])}</li>`;
+        } else {
+          if (inList) {
+            html += "</ul>";
+            inList = false;
+          }
+          html += `<p>${inlineBold(line)}</p>`;
+        }
+      }
+      if (inList) html += "</ul>";
+      return html || `<p>${inlineBold(raw)}</p>`;
+    }
+
+    function clampScore(n) {
+      const num = Number(n);
+      if (!Number.isFinite(num)) return 50;
+      return Math.max(0, Math.min(100, Math.round(num)));
+    }
+
+    function renderReport(report, argText) {
+      currentReport = { argument: argText, focus: currentFocus, data: report, date: new Date().toISOString() };
+      document.getElementById("results-container").style.display = "flex";
+
+      const logic = clampScore(report.logicScore);
+      const bias = clampScore(report.biasRiskScore);
+      const science = clampScore(report.scienceSupportScore);
+      const theology = clampScore(report.theologyCoherenceScore);
+
+      const circumference = 2 * Math.PI * 28;
+      const ringLogic = document.getElementById("ring-logic");
+      const ringBias = document.getElementById("ring-bias");
+
+      ringLogic.style.strokeDashoffset = circumference * (1 - logic / 100);
+      ringBias.style.strokeDashoffset = circumference * (1 - bias / 100);
+
+      document.getElementById("val-logic").textContent = logic + "%";
+      document.getElementById("val-bias").textContent = bias + "%";
+      document.getElementById("val-science").textContent = science + "%";
+      document.getElementById("val-theology").textContent = theology + "%";
+      document.getElementById("bar-science").style.width = science + "%";
+      document.getElementById("bar-theology").style.width = theology + "%";
+
+      document.getElementById("out-anatomy").innerHTML = formatRichText(report.anatomy);
+
+      const fallaciesEl = document.getElementById("out-fallacies");
+      fallaciesEl.innerHTML = "";
+      const fallacies = Array.isArray(report.fallacies) && report.fallacies.length
+        ? report.fallacies
+        : ["Evaluación de supuestos implícitos"];
+      fallacies.forEach((f) => {
+        const span = document.createElement("span");
+        span.className = "pill";
+        span.textContent = String(f);
+        fallaciesEl.appendChild(span);
+      });
+
+      document.getElementById("out-refutation").innerHTML = formatRichText(report.refutation);
+      document.getElementById("out-science-theology").innerHTML = formatRichText(report.scienceAndTheology);
+      document.getElementById("out-conclusion").innerHTML = formatRichText(report.universalConclusion);
+    }
+
+    function getHistory() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.history);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function saveHistoryEntry(entry) {
+      const list = getHistory();
+      list.unshift(entry);
+      const trimmed = list.slice(0, 25);
+      try {
+        localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(trimmed));
+      } catch (_) {}
+    }
+
+    function renderHistory() {
+      const container = document.getElementById("history-list");
+      const list = getHistory();
+      container.innerHTML = "";
+      if (!list.length) {
+        container.innerHTML = `<p class="rich-text">Aún no hay análisis guardados en este dispositivo.</p>`;
+        return;
+      }
+      list.forEach((item, idx) => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        const dateStr = item.date ? new Date(item.date).toLocaleString("es") : "";
+        div.innerHTML = `
+          <div class="history-preview">${escapeHtml(item.argument)}</div>
+          <div class="history-meta">
+            <span>${escapeHtml(dateStr)}</span>
+            <div class="history-actions">
+              <button type="button" class="mini-btn" data-load="${idx}">Abrir</button>
+              <button type="button" class="mini-btn" data-del="${idx}">Borrar</button>
+            </div>
+          </div>
+        `;
+        div.querySelector("[data-load]").addEventListener("click", () => {
+          document.getElementById("argument-input").value = item.argument;
+          renderReport(item.data, item.argument);
+          closeModal("history-modal");
+          showToast("Análisis cargado");
+        });
+        div.querySelector("[data-del]").addEventListener("click", () => {
+          const updated = getHistory().filter((_, i) => i !== idx);
+          try {
+            localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(updated));
+          } catch (_) {}
+          renderHistory();
+        });
+        container.appendChild(div);
+      });
+    }
+
+    async function callGeminiAnalysis(argumentText, focusMode) {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ argument: argumentText, focus: focusMode })
+      });
+
+      if (!response.ok) {
+        let errDetail = "Error en la solicitud de análisis.";
+        try {
+          const errJson = await response.json();
+          if (errJson && errJson.error) errDetail = errJson.error;
+        } catch (_) {}
+        throw new Error(errDetail);
+      }
+
+      const payload = await response.json();
+      if (!payload || typeof payload !== "object") {
+        throw new Error("Respuesta vacía o inválida del servidor.");
+      }
+      return payload;
+    }
+
+    function buildPlainReportText() {
+      if (!currentReport) return "";
+      const d = currentReport.data;
+      return [
+        "ARGUMENTO:",
+        currentReport.argument,
+        "",
+        "ANATOMÍA Y SUPUESTOS:",
+        d.anatomy || "",
+        "",
+        "FALACIAS / SESGOS:",
+        (d.fallacies || []).join(", "),
+        "",
+        "REFUTACIÓN OBJETIVA:",
+        d.refutation || "",
+        "",
+        "CIENCIA Y TEOLOGÍA:",
+        d.scienceAndTheology || "",
+        "",
+        "CONCLUSIÓN UNIVERSAL:",
+        d.universalConclusion || ""
+      ].join("
+");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = (() => {
+        try {
+          return localStorage.getItem(STORAGE_KEYS.theme) || "editorial";
+        } catch (_) {
+          return "editorial";
+        }
+      })();
+      applyTheme(savedTheme);
+
+      // Botón Paleta
+      document.getElementById("btn-theme-palette").addEventListener("click", () => {
+        const active = (() => {
+          try { return localStorage.getItem(STORAGE_KEYS.theme) || "editorial"; }
+          catch (_) { return "editorial"; }
+        })();
+        renderThemeOptions(active);
+        openModal("theme-modal");
+      });
+      document.getElementById("close-theme-modal").addEventListener("click", () => closeModal("theme-modal"));
+
+      // Botón Historial
+      document.getElementById("btn-history").addEventListener("click", () => {
+        renderHistory();
+        openModal("history-modal");
+      });
+      document.getElementById("close-history-modal").addEventListener("click", () => closeModal("history-modal"));
+
+      // Botón Instalar App
+      document.getElementById("btn-install").addEventListener("click", () => {
+        const nativeBtn = document.getElementById("btn-native-install");
+        nativeBtn.style.display = deferredInstallPrompt ? "inline-flex" : "none";
+        openModal("install-modal");
+      });
+      document.getElementById("close-install-modal").addEventListener("click", () => closeModal("install-modal"));
+      document.getElementById("btn-native-install").addEventListener("click", async () => {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        closeModal("install-modal");
+      });
+
+      // Cerrar modales al tocar fondo oscuro o Escape
+      document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
+        backdrop.addEventListener("click", (e) => {
+          if (e.target === backdrop) backdrop.classList.remove("open");
+        });
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          document.querySelectorAll(".modal-backdrop.open").forEach((m) => m.classList.remove("open"));
+        }
+      });
+
+      // Selector de Enfoque
+      document.querySelectorAll(".focus-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".focus-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentFocus = btn.getAttribute("data-focus") || "universal";
+        });
+      });
+
+      // Ejemplos rápidos
+      document.querySelectorAll(".sample-chip").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          const sample = chip.getAttribute("data-sample") || "";
+          document.getElementById("argument-input").value = sample;
+          document.getElementById("argument-input").focus();
+        });
+      });
+
+      // Limpiar
+      document.getElementById("btn-clear").addEventListener("click", () => {
+        document.getElementById("argument-input").value = "";
+        document.getElementById("results-container").style.display = "none";
+        const banner = document.getElementById("status-banner");
+        banner.className = "status-banner";
+        banner.textContent = "";
+        currentReport = null;
+      });
+
+      // Analizar
+      const analyzeBtn = document.getElementById("btn-analyze");
+      analyzeBtn.addEventListener("click", async () => {
+        const argText = document.getElementById("argument-input").value.trim();
+        const banner = document.getElementById("status-banner");
+
+        if (!argText) {
+          banner.className = "status-banner error";
+          banner.textContent = "Por favor, escribe o pega un argumento antes de analizar.";
+          return;
+        }
+
+        analyzeBtn.disabled = true;
+        banner.className = "status-banner info";
+        banner.innerHTML = `<span class="spinner"></span><span>Analizando estructura lógica, supuestos, ciencia y teología...</span>`;
+
+        try {
+          const report = await callGeminiAnalysis(argText, currentFocus);
+          banner.className = "status-banner";
+          banner.textContent = "";
+          renderReport(report, argText);
+          saveHistoryEntry(currentReport);
+          showToast("Análisis completado");
+        } catch (err) {
+          banner.className = "status-banner error";
+          banner.textContent = "No se pudo completar el análisis: " + (err.message || "Error inesperado.");
+        } finally {
+          analyzeBtn.disabled = false;
+        }
+      });
+
+      // Copiar y Compartir
+      document.getElementById("btn-copy").addEventListener("click", async () => {
+        const text = buildPlainReportText();
+        if (!text) return;
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast("Informe copiado");
+        } catch (_) {
+          showToast("No se pudo copiar automáticamente");
+        }
+      });
+
+      document.getElementById("btn-share").addEventListener("click", async () => {
+        const text = buildPlainReportText();
+        if (!text) return;
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: "LogosCritique — Análisis", text });
+          } catch (_) {}
+        } else {
+          try {
+            await navigator.clipboard.writeText(text);
+            showToast("Texto copiado para compartir");
+          } catch (_) {}
+        }
+      });
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+      });
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("./sw.js").catch(() => {});
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "LogosCritique",
+  "short_name": "LogosCritique",
+  "description": "Aplicación PWA para analizar, deconstruir y refutar argumentos con rigor lógico, científico y teológico.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f4ef",
+  "theme_color": "#1f3a52",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
