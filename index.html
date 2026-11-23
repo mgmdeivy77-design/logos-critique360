@@ -983,9 +983,7 @@
 
     function formatRichText(raw) {
       if (!raw) return "<p>No disponible.</p>";
-      const lines = String(raw).split(/
-?
-/).map((l) => l.trim()).filter(Boolean);
+      const lines = String(raw).split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
       let html = "";
       let listType = null;
 
@@ -1150,7 +1148,7 @@
       });
 
       if (!response.ok) {
-        let errDetail = "Error en la solicitud de análisis.";
+        let errDetail = "Error en la solicitud de análisis (HTTP " + response.status + ").";
         try {
           const errJson = await response.json();
           if (errJson && errJson.error) errDetail = errJson.error;
@@ -1189,8 +1187,7 @@
         "",
         "4. CONCLUSIÓN UNIVERSAL:",
         d.universalConclusion || ""
-      ].join("
-");
+      ].join("\n");
     }
 
     document.addEventListener("DOMContentLoaded", () => {
